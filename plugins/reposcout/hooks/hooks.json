@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'RepoScout plugin loaded. Use /reposcout:find to search for base projects.'"
+          }
+        ]
+      }
+    ]
+  }
+}

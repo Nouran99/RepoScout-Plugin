@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "reposcout": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "mcp_server.server"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}/src",
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN:-}",
+        "REPOSCOUT_API_KEY": "${REPOSCOUT_API_KEY:-}",
+        "REPOSCOUT_BACKEND_URL": "${REPOSCOUT_BACKEND_URL:-https://reposcout-api.nouran-darwish-ai.dev}"
+      }
+    }
+  }
+}

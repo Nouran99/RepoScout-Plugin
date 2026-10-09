@@ -1,0 +1,10 @@
+{
+  "name": "reposcout",
+  "description": "Find the perfect open-source project to bootstrap your next build. Searches GitHub, scores project health, analyzes architecture, and scaffolds your starting point.",
+  "version": "1.0.1",
+  "author": { "name": "Nouran" },
+  "homepage": "https://nouran-darwish-ai.dev/reposcout",
+  "repository": "https://github.com/Nouran99/RepoScout/tree/plugin-community/plugins/reposcout",
+  "license": "MIT",
+  "keywords": ["github", "open-source", "scaffold", "boilerplate", "starter", "template"]
+}

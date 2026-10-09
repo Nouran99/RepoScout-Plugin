@@ -1,0 +1,14 @@
+{
+  "name": "reposcout-marketplace",
+  "description": "The official marketplace for the RepoScout Claude Code plugin.",
+  "owner": {
+    "name": "Nouran Darwish"
+  },
+  "plugins": [
+    {
+      "name": "reposcout",
+      "source": "./plugins/reposcout",
+      "description": "Find, assess, compare, and scaffold healthy open-source GitHub repositories."
+    }
+  ]
+}
