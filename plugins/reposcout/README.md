@@ -27,10 +27,10 @@ Use this checklist before submitting to the Anthropic marketplace:
 
 ## Production installation
 
-Add the official RepoScout marketplace branch, then install the plugin:
+Add the official RepoScout marketplace, then install the plugin:
 
 ```bash
-claude plugin marketplace add Nouran99/RepoScout#plugin-community
+claude plugin marketplace add Nouran99/RepoScout-Plugin
 claude plugin install reposcout@reposcout-marketplace
 ```
 

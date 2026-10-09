@@ -4,7 +4,7 @@
   "version": "1.0.1",
   "author": { "name": "Nouran" },
   "homepage": "https://nouran-darwish-ai.dev/reposcout",
-  "repository": "https://github.com/Nouran99/RepoScout/tree/plugin-community/plugins/reposcout",
+  "repository": "https://github.com/Nouran99/RepoScout-Plugin/tree/main/plugins/reposcout",
   "license": "MIT",
   "keywords": ["github", "open-source", "scaffold", "boilerplate", "starter", "template"]
 }

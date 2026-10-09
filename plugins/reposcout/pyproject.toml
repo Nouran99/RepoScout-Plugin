@@ -16,8 +16,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://nouran-darwish-ai.dev/reposcout"
-Repository = "https://github.com/Nouran99/RepoScout/tree/plugin-community/plugins/reposcout"
-Issues = "https://github.com/Nouran99/RepoScout/issues"
+Repository = "https://github.com/Nouran99/RepoScout-Plugin/tree/main/plugins/reposcout"
+Issues = "https://github.com/Nouran99/RepoScout-Plugin/issues"
 
 [project.optional-dependencies]
 dev = [

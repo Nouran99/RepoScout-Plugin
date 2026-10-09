@@ -1,16 +1,16 @@
 # RepoScout Plugin Marketplace
 
-This branch is the public distribution surface for the RepoScout Claude Code
+This repository is the public distribution surface for the RepoScout Claude Code
 plugin. It contains only the plugin, its tests, marketplace metadata, and public
 documentation. The RepoScout SaaS application, deployment configuration, and
 private environment files are deliberately excluded.
 
 ## Install
 
-Add the marketplace from this branch, then install RepoScout:
+Add the official marketplace, then install RepoScout:
 
 ```bash
-claude plugin marketplace add Nouran99/RepoScout#plugin-community
+claude plugin marketplace add Nouran99/RepoScout-Plugin
 claude plugin install reposcout@reposcout-marketplace
 ```
 
