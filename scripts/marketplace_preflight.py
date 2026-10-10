@@ -74,10 +74,10 @@ def validate(plugin_dir: Path) -> None:
         raise MarketplaceError(".mcp.json must define mcpServers.reposcout")
     if server.get("command") != "uv":
         raise MarketplaceError("RepoScout MCP launcher must use uv")
-    if server.get("cwd") != "${CLAUDE_PLUGIN_ROOT}/src":
-        raise MarketplaceError("RepoScout MCP launcher cwd must be ${CLAUDE_PLUGIN_ROOT}/src")
-    if "mcp_server.server" not in (server.get("args") or []):
-        raise MarketplaceError("RepoScout MCP launcher must start mcp_server.server")
+    if server.get("args") != [
+        "run", "--project", "${CLAUDE_PLUGIN_ROOT}", "--no-dev", "reposcout-mcp",
+    ]:
+        raise MarketplaceError("RepoScout MCP launcher must select the installed plugin project")
 
     required_paths = (
         "README.md",

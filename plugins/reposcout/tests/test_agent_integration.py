@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -58,10 +59,22 @@ def test_logging_never_writes_to_protocol_stdout(tmp_path):
 
 
 @pytest.mark.parametrize("launcher", [
-    "codex", "opencode", "qwen", "generic", "console", "module-server",
+    "codex", "opencode", "qwen", "generic", "console", "module-server", "claude",
 ])
 async def test_launchers_discover_and_call_mcp_from_another_directory(launcher, tmp_path):
-    if launcher == "console":
+    env = {"GITHUB_TOKEN": "", "REPOSCOUT_API_KEY": ""}
+    if launcher == "claude":
+        plugin_root = Path(__file__).resolve().parents[1]
+        # Relocate the actual package to exercise plugin-root expansion, uv
+        # project selection, and fresh installation from a path with spaces.
+        installed_root = tmp_path / "installed plugin with spaces"
+        shutil.copytree(plugin_root, installed_root, ignore=shutil.ignore_patterns(
+            ".venv", "tests", "dist", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache",
+        ))
+        server = json.loads((installed_root / ".mcp.json").read_text())["mcpServers"]["reposcout"]
+        command = server["command"]
+        args = [arg.replace("${CLAUDE_PLUGIN_ROOT}", str(installed_root)) for arg in server["args"]]
+    elif launcher == "console":
         executable = Path(sys.executable).parent / (
             "reposcout-mcp.exe" if sys.platform == "win32" else "reposcout-mcp"
         )
@@ -84,9 +97,9 @@ async def test_launchers_discover_and_call_mcp_from_another_directory(launcher, 
     cwd.mkdir()
     parameters = StdioServerParameters(
         command=command, args=args, cwd=cwd,
-        env={"GITHUB_TOKEN": "", "REPOSCOUT_API_KEY": ""},
+        env=env,
     )
-    async with asyncio.timeout(20):
+    async with asyncio.timeout(60 if launcher == "claude" else 20):
         async with stdio_client(parameters) as (read, write):
             async with ClientSession(read, write) as session:
                 initialized = await session.initialize()
@@ -112,3 +125,18 @@ async def test_launchers_discover_and_call_mcp_from_another_directory(launcher, 
                 result = await session.call_tool("compare_repos", {"repo_urls": []})
                 assert result.isError
                 assert any("exactly 2 or 3" in item.text for item in result.content if item.type == "text")
+
+
+def test_doctor_checks_real_stdio_without_credentials_or_network(tmp_path):
+    executable = Path(sys.executable).parent / "reposcout-mcp"
+    if sys.platform == "win32":
+        executable = executable.with_suffix(".exe")
+    result = subprocess.run(
+        [str(executable), "doctor"], cwd=tmp_path,
+        capture_output=True, text=True, check=True, timeout=40,
+    )
+    report = json.loads(result.stdout)
+    assert report["status"] == "ok"
+    assert set(report["tools"]) == _TOOLS
+    assert report["prompts"] == ["analyze", "compare", "find"]
+    assert report["network_checked"] is False

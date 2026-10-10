@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import sys
+import tempfile
 from collections.abc import Sequence
 
 import structlog
@@ -55,15 +57,62 @@ def configure_logging() -> None:
     )
 
 
+async def check_installation() -> dict[str, object]:
+    """Check the installed server over stdio without credentials or network calls."""
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
+    expected_tools = {
+        "search_repos", "analyze_repo", "compare_repos",
+        "check_license_compatibility", "clone_and_scaffold",
+    }
+    with tempfile.TemporaryDirectory(prefix="reposcout connection check ") as directory:
+        parameters = StdioServerParameters(
+            command=sys.executable, args=["-m", "mcp_server"], cwd=directory,
+            env={"GITHUB_TOKEN": "", "REPOSCOUT_API_KEY": ""},
+        )
+        async with asyncio.timeout(30):
+            async with stdio_client(parameters) as (read, write):
+                async with ClientSession(read, write) as session:
+                    initialized = await session.initialize()
+                    tools = await session.list_tools()
+                    prompts = await session.list_prompts()
+                    if initialized.serverInfo.name != "reposcout":
+                        raise RuntimeError("Unexpected MCP server")
+                    if {tool.name for tool in tools.tools} != expected_tools:
+                        raise RuntimeError("Incomplete tool discovery")
+                    if {prompt.name for prompt in prompts.prompts} != {"find", "analyze", "compare"}:
+                        raise RuntimeError("Incomplete prompt discovery")
+                    # Invalid input is rejected before backend/quota access.
+                    result = await session.call_tool("compare_repos", {"repo_urls": []})
+                    if not result.isError:
+                        raise RuntimeError("Tool validation failed")
+    return {
+        "status": "ok", "server": initialized.serverInfo.name,
+        "tools": sorted(expected_tools),
+        "prompts": sorted(prompt.name for prompt in prompts.prompts),
+        "tool_call": "invalid input rejected",
+        "network_checked": False,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="RepoScout MCP server for coding agents")
     commands = parser.add_subparsers(dest="command")
     commands.add_parser("serve", help="Run the stdio MCP server (the default)")
+    commands.add_parser("doctor", help="Check local MCP discovery and tool calls without using quota")
     config = commands.add_parser("config", help="Print a client config fragment; no files are changed")
     config.add_argument("--client", required=True, choices=["codex", "opencode", "qwen", "generic"])
     options = parser.parse_args(argv)
     if options.command == "config":
         print(client_config(options.client))
+        return
+    if options.command == "doctor":
+        try:
+            report = asyncio.run(check_installation())
+        except Exception as exc:
+            parser.exit(1, f"RepoScout connection check failed ({type(exc).__name__}).\n")
+        print(json.dumps(report, indent=2))
         return
 
     configure_logging()

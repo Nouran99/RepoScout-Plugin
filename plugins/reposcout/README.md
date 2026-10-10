@@ -15,6 +15,7 @@ Install the standalone server from this directory:
 
 ```bash
 uv tool install .
+reposcout-mcp doctor
 reposcout-mcp config --client codex
 ```
 
@@ -26,6 +27,9 @@ Use `--client opencode` for `opencode.json`, `--client qwen` for
 The launcher also works as `python -m mcp_server` in an environment with this
 package installed. `reposcout-mcp` (or `reposcout-mcp serve`) runs the MCP server;
 `config` only prints configuration and never changes your agent's files.
+`doctor` verifies local MCP initialization, five tools, three workflow prompts,
+and tool input validation from an unrelated directory. It needs no keys or
+network and consumes no quota; it does not check live backend availability.
 
 See [the full agent setup guide](../../docs/CODING_AGENTS.md). Claude's slash
 commands, hooks, and subagent are specific to Claude Code; other clients receive
@@ -128,8 +132,7 @@ This plugin starts its MCP server with:
   "mcpServers": {
     "reposcout": {
       "command": "uv",
-      "args": ["run", "python", "-m", "mcp_server.server"],
-      "cwd": "${CLAUDE_PLUGIN_ROOT}/src"
+      "args": ["run", "--project", "${CLAUDE_PLUGIN_ROOT}", "--no-dev", "reposcout-mcp"]
     }
   }
 }
@@ -138,6 +141,8 @@ This plugin starts its MCP server with:
 Marketplace users need Python 3.12+ and `uv`. Other agents use the installed
 `reposcout-mcp` launcher or the generated configuration; they do not need
 `CLAUDE_PLUGIN_ROOT`. Both launch paths use the same MCP tools and backend.
+Explicit project selection lets the Claude plugin start from other directories,
+including paths with spaces. The first launch may download Python dependencies.
 
 ## Trust and license scope
 

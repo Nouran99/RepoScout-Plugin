@@ -14,11 +14,19 @@ From a checkout of this repository:
 ```bash
 uv tool install ./plugins/reposcout
 reposcout-mcp --help
+reposcout-mcp doctor
 ```
 
 Make sure uv's tool executable directory is on your `PATH` (`uv tool update-shell`
 can help). This installs a dedicated environment without requiring Claude Code.
 The instructions use this checkout; they do not assume a PyPI release exists.
+
+`doctor` starts the installed server from an unrelated temporary directory and
+checks MCP initialization, all five tools, three prompts, and an input-validation
+error. It uses no API credentials, makes no external requests, and consumes no
+quota. It prints a JSON report with `"status": "ok"` on success and exits nonzero
+on failure. It checks the installation, not whether a particular CLI has loaded
+your configuration or whether the production backend is available.
 
 `reposcout-mcp config --client CLIENT` prints a fragment containing the absolute
 Python interpreter of this installation and `-m mcp_server`. It works from any
@@ -59,8 +67,13 @@ reposcout-mcp config --client qwen
 ```
 
 Merge the JSON output into `~/.qwen/settings.json` for all projects, or
-`.qwen/settings.json` for one project. Restart Qwen Code and use `/mcp` to
-inspect RepoScout. Review any workspace trust or tool confirmation prompts.
+`.qwen/settings.json` for one project. Restart Qwen Code, run `qwen mcp list`,
+and use `/mcp` to inspect RepoScout. Review any workspace trust or tool
+confirmation prompts.
+
+If `qwen mcp list` shows **Pending approval**, review the server configuration,
+run `qwen mcp approve reposcout`, then check the list again. Approval is bound
+to the current configuration; changing its command may require new approval.
 
 See the [official Qwen Code MCP documentation](https://qwenlm.github.io/qwen-code-docs/en/users/features/mcp/).
 
@@ -115,6 +128,23 @@ space-separated string). Prompt display and invocation depend on the client;
 plain-language requests work through the tools without prompt support. Claude's
 `/reposcout:*` commands, hooks, skills, and subagent are native Claude assets
 and are not installed by these MCP configurations.
+
+## Claude Code native plugin
+
+```bash
+claude plugin marketplace add Nouran99/RepoScout-Plugin
+claude plugin install reposcout@reposcout-marketplace
+```
+
+Restart Claude Code or run `/reload-plugins`, then `/reposcout:setup`. Anonymous
+free mode needs no key. To validate a checkout, run
+`claude plugin validate ./plugins/reposcout` from the repository root.
+
+The native `.mcp.json` uses `uv run --project "${CLAUDE_PLUGIN_ROOT}" --no-dev reposcout-mcp`.
+Claude expands the plugin root; uv selects that Python project explicitly rather
+than relying on the coding agent's working directory. Do not copy this manifest
+into another client's configuration. Use the standalone configuration generator
+for Codex, OpenCode, Qwen Code, and other MCP clients.
 
 ## Development without a tool installation
 
