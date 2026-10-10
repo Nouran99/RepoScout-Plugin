@@ -10,7 +10,8 @@ branches:
         checks:
           - context: Plugin checks (lint / type / test / package)
             app_id: 15368
-      enforce_admins: true
+      # Repository admins may merge their own PRs; contributors require approval.
+      enforce_admins: false
       restrictions: null
       required_conversation_resolution: true
       allow_force_pushes: false
