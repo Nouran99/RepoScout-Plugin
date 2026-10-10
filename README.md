@@ -1,14 +1,36 @@
-# RepoScout Plugin Marketplace
+# RepoScout — repository scouting for coding agents
 
-This repository is the public distribution surface for the RepoScout Claude Code
-plugin. It contains only the plugin, its tests, marketplace metadata, and public
+RepoScout works with Claude Code, Codex, OpenCode, Qwen Code, and other agents
+that support local MCP servers over stdio. This repository contains the shared
+MCP server, Claude Code plugin, tests, marketplace metadata, and public
 documentation. The RepoScout SaaS application, deployment configuration, and
 private environment files are deliberately excluded.
 
 The plugin connects to the SaaS only through the versioned HTTPS contract in
 [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
 
-## Install
+## Install for Codex, OpenCode, Qwen Code, or another MCP client
+
+With Python 3.12+ and [uv](https://docs.astral.sh/uv/) installed, run from this
+repository's root:
+
+```bash
+uv tool install ./plugins/reposcout
+reposcout-mcp config --client codex
+```
+
+Merge the printed configuration into `~/.codex/config.toml`. For OpenCode use
+`--client opencode` and merge into `opencode.json`; for Qwen Code use
+`--client qwen` and merge into `~/.qwen/settings.json`. Use `--client generic`
+for a conventional `mcpServers` JSON fragment. Existing settings should be kept.
+
+Restart your agent and ask: “Use RepoScout to find a maintained MIT-licensed
+FastAPI starter.” No RepoScout API key is needed for anonymous free mode.
+
+See [the coding-agent setup guide](docs/CODING_AGENTS.md) for configuration,
+credentials, development launchers, and compatibility details.
+
+## Install for Claude Code
 
 Add the official marketplace, then install RepoScout:
 
@@ -37,7 +59,7 @@ user.
 ```bash
 claude plugin validate .
 cd plugins/reposcout
-uv sync --dev
+uv sync --all-groups
 uv run pytest
 uv run ruff check src tests
 uv run mypy src

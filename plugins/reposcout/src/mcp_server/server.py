@@ -27,9 +27,11 @@ from mcp_server.models.github import (
 )
 from mcp_server.scoring.health_scorer import HealthScorer
 from mcp_server.search.query_expander import QueryExpander
+from mcp_server.workflows import INSTRUCTIONS, register_prompts
 
 logger = structlog.get_logger(__name__)
-mcp = FastMCP("reposcout")
+mcp = FastMCP("reposcout", instructions=INSTRUCTIONS)
+register_prompts(mcp)
 
 
 # ── License classification tables ─────────────────────────────────────────────
@@ -752,4 +754,11 @@ async def check_license_compatibility(
         commercial_use=commercial_use,
     )
     return report.model_dump(mode="json")
+
+
+if __name__ == "__main__":
+    from mcp_server.cli import configure_logging
+
+    configure_logging()
+    mcp.run(transport="stdio")
 

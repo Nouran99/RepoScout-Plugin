@@ -1,12 +1,35 @@
-# RepoScout Claude Plugin
+# RepoScout MCP server and Claude Code plugin
 
-RepoScout is a Claude Code plugin that helps users find strong open-source repos
-to bootstrap new products. It bundles:
+RepoScout helps coding agents find strong open-source repos to bootstrap new
+products. Its standard stdio MCP server works with Codex, OpenCode, Qwen Code,
+and other MCP clients. It also bundles a native Claude Code plugin:
 
 - MCP tools for search, analysis, comparison, and scaffolding
 - Claude commands in `commands/`
 - A project scouting skill in `skills/project-scout/`
 - A repo analyst subagent in `agents/`
+
+## Other coding agents
+
+Install the standalone server from this directory:
+
+```bash
+uv tool install .
+reposcout-mcp config --client codex
+```
+
+Merge the output into `~/.codex/config.toml`, preserving existing settings.
+Use `--client opencode` for `opencode.json`, `--client qwen` for
+`~/.qwen/settings.json`, or `--client generic` for other clients that accept
+`mcpServers` JSON. Restart the agent, then ask it to use RepoScout.
+
+The launcher also works as `python -m mcp_server` in an environment with this
+package installed. `reposcout-mcp` (or `reposcout-mcp serve`) runs the MCP server;
+`config` only prints configuration and never changes your agent's files.
+
+See [the full agent setup guide](../../docs/CODING_AGENTS.md). Claude's slash
+commands, hooks, and subagent are specific to Claude Code; other clients receive
+the same five tools, server instructions, and optional MCP workflow prompts.
 
 ## Before Submission
 
@@ -21,7 +44,7 @@ Use this checklist before submitting to the Anthropic marketplace:
 
 ## Prerequisites
 
-- Claude Code installed and authenticated
+- Your coding agent installed and authenticated, with local stdio MCP support
 - Python 3.12+
 - `uv`
 
@@ -45,7 +68,7 @@ plan attached to your RepoScout account.
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and authenticate it.
 2. Install Python 3.12+ and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 3. Optionally create a RepoScout API key in the RepoScout dashboard at `https://nouran-darwish-ai.dev/reposcout/settings/api-keys`.
-4. Set any optional credentials in the same shell that launches Claude Code:
+4. Set any optional credentials in the same shell that launches your coding agent:
 
 ```bash
 export REPOSCOUT_API_KEY="rs_..."
@@ -79,7 +102,7 @@ Optional variables used by the MCP server:
 From this directory:
 
 ```bash
-uv sync --dev
+uv sync --all-groups
 claude --plugin-dir /absolute/path/to/RepoScout-plugin-community/plugins/reposcout
 ```
 
@@ -105,14 +128,16 @@ This plugin starts its MCP server with:
   "mcpServers": {
     "reposcout": {
       "command": "uv",
-      "args": ["run", "python", "-m", "mcp_server.server"]
+      "args": ["run", "python", "-m", "mcp_server.server"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}/src"
     }
   }
 }
 ```
 
-That means marketplace users need a working Python 3.12+ and `uv` install unless
-you later switch to a bundled launcher.
+Marketplace users need Python 3.12+ and `uv`. Other agents use the installed
+`reposcout-mcp` launcher or the generated configuration; they do not need
+`CLAUDE_PLUGIN_ROOT`. Both launch paths use the same MCP tools and backend.
 
 ## Trust and license scope
 

@@ -1,4 +1,5 @@
 """Entry point — run the RepoScout MCP server over stdio transport."""
-from mcp_server.server import mcp
+from mcp_server.cli import main
 
-mcp.run(transport="stdio")
+if __name__ == "__main__":
+    main()

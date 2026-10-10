@@ -1,7 +1,7 @@
 [project]
 name = "reposcout-plugin"
 version = "1.0.1"
-description = "Claude Code plugin — find the perfect open-source project to bootstrap your next build"
+description = "MCP server and Claude Code plugin — find an open-source project to bootstrap your next build"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "Nouran" }]
@@ -13,6 +13,9 @@ dependencies = [
     "pydantic>=2.0,<3.0",
     "pydantic-settings>=2.0,<3.0",
 ]
+
+[project.scripts]
+reposcout-mcp = "mcp_server.cli:main"
 
 [project.urls]
 Homepage = "https://nouran-darwish-ai.dev/reposcout"
