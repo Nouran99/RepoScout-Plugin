@@ -5,6 +5,9 @@ plugin. It contains only the plugin, its tests, marketplace metadata, and public
 documentation. The RepoScout SaaS application, deployment configuration, and
 private environment files are deliberately excluded.
 
+The plugin connects to the SaaS only through the versioned HTTPS contract in
+[`docs/API_CONTRACT.md`](docs/API_CONTRACT.md).
+
 ## Install
 
 Add the official marketplace, then install RepoScout:
@@ -38,6 +41,8 @@ uv sync --dev
 uv run pytest
 uv run ruff check src tests
 uv run mypy src
+cd ../..
+python scripts/marketplace_preflight.py --plugin-dir plugins/reposcout
 ```
 
 Please report security issues using the private process in [SECURITY.md](SECURITY.md),

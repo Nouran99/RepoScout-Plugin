@@ -16,7 +16,7 @@ Use this checklist before submitting to the Anthropic marketplace:
 2. Bump `.claude-plugin/plugin.json` with a semantic version.
 3. Verify `homepage`, `repository`, and `license` metadata are correct.
 4. Confirm the production `REPOSCOUT_BACKEND_URL` to document for users.
-5. Test local install with `claude --plugin-dir /absolute/path/to/reposcout/plugin`.
+5. Test local install with `claude --plugin-dir /absolute/path/to/RepoScout-plugin-community/plugins/reposcout`.
 6. Have at least one external tester install and use the plugin.
 
 ## Prerequisites
@@ -61,7 +61,7 @@ export REPOSCOUT_BACKEND_URL="http://localhost:8000"
 To test a checked-out plugin directly:
 
 ```bash
-claude --plugin-dir /absolute/path/to/reposcout/plugin
+claude --plugin-dir /absolute/path/to/RepoScout-plugin-community/plugins/reposcout
 ```
 
 The plugin makes one server-authoritative quota reservation per billable tool call and fails closed when the licensing backend is unreachable. Keep `REPOSCOUT_API_KEY` private, rotate it from the dashboard if it is exposed, and do not commit it to a repository or shell history. `REPOSCOUT_LICENSE_FAIL_OPEN=true` is reserved for local development and must not be used in production.
@@ -80,7 +80,7 @@ From this directory:
 
 ```bash
 uv sync --dev
-claude --plugin-dir /absolute/path/to/reposcout/plugin
+claude --plugin-dir /absolute/path/to/RepoScout-plugin-community/plugins/reposcout
 ```
 
 Claude loads:
