@@ -2,8 +2,7 @@
   "mcpServers": {
     "reposcout": {
       "command": "uv",
-      "args": ["run", "python", "-m", "mcp_server.server"],
-      "cwd": "${CLAUDE_PLUGIN_ROOT}/src",
+      "args": ["run", "--project", "${CLAUDE_PLUGIN_ROOT}", "--no-dev", "reposcout-mcp"],
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN:-}",
         "REPOSCOUT_API_KEY": "${REPOSCOUT_API_KEY:-}",
