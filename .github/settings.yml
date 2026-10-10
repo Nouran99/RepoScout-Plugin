@@ -1,10 +1,17 @@
 branches:
   - name: main
     protection:
-      required_pull_request_reviews: null
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_last_push_approval: true
       required_status_checks:
         strict: true
-        contexts:
-          - Plugin checks (lint / type / test / package)
-      enforce_admins: false
+        checks:
+          - context: Plugin checks (lint / type / test / package)
+            app_id: 15368
+      enforce_admins: true
       restrictions: null
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
